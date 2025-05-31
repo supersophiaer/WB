@@ -270,8 +270,9 @@ export function WhiteboardProvider({ children }) {
   const drawText = (context, element) => {
     if (!element.text) return
     
-    context.font = `${element.size * 2}px sans-serif`
-    context.fillStyle = element.color
+    const fontSize = element.size * 2 || state.size * 2
+    context.font = `${fontSize}px sans-serif`
+    context.fillStyle = element.color || state.color
     context.fillText(element.text, element.x1, element.y1)
   }
 

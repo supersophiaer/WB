@@ -32,6 +32,12 @@ const Whiteboard = () => {
   const containerRef = useRef(null)
   const [panStart, setPanStart] = useState(null)
   const [tooltip, setTooltip] = useState(null)
+  const [textInput, setTextInput] = useState({
+    isVisible: false,
+    x: 0,
+    y: 0,
+    value: ''
+  })
 
   // Initialize canvas
   useEffect(() => {
@@ -137,6 +143,16 @@ const Whiteboard = () => {
     if (e.button !== 0) return // Only left mouse button
     
     const { x, y } = getTransformedPoint(e.clientX, e.clientY)
+    
+    if (tool === 'text') {
+      setTextInput({
+        isVisible: true,
+        x: x,
+        y: y,
+        value: ''
+      })
+      return
+    }
     
     if (tool === 'select') {
       const element = getElementAtPosition(x, y)
@@ -259,6 +275,46 @@ const Whiteboard = () => {
     }
   }
 
+  const handleTextInputChange = (e) => {
+    setTextInput({
+      ...textInput,
+      value: e.target.value
+    })
+  }
+
+  const handleTextInputBlur = () => {
+    if (textInput.value.trim()) {
+      const id = uuidv4()
+      const newElement = createElement(
+        id, 
+        textInput.x, 
+        textInput.y, 
+        textInput.x + textInput.value.length * size, 
+        textInput.y, 
+        'text',
+        { 
+          color, 
+          size, 
+          text: textInput.value,
+          userId: user?.id 
+        }
+      )
+      
+      dispatch({ type: 'ADD_ELEMENT', payload: newElement })
+      
+      if (socket) {
+        socket.emit('element-add', newElement)
+      }
+    }
+    
+    setTextInput({
+      isVisible: false,
+      x: 0,
+      y: 0,
+      value: ''
+    })
+  }
+
   const getElementAtPosition = (x, y) => {
     // Check elements in reverse order (top to bottom)
     for (let i = elements.length - 1; i >= 0; i--) {
@@ -342,6 +398,35 @@ const Whiteboard = () => {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       />
+      
+      {textInput.isVisible && (
+        <div
+          className="absolute z-20"
+          style={{
+            left: textInput.x * viewTransform.scale + viewTransform.offsetX,
+            top: textInput.y * viewTransform.scale + viewTransform.offsetY - 20
+          }}
+        >
+          <input
+            type="text"
+            autoFocus
+            value={textInput.value}
+            onChange={handleTextInputChange}
+            onBlur={handleTextInputBlur}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.target.blur()
+              }
+            }}
+            className="bg-transparent border-b border-gray-500 outline-none px-1"
+            style={{
+              color: color,
+              fontSize: `${size * 2}px`,
+              minWidth: '100px'
+            }}
+          />
+        </div>
+      )}
       
       {Object.entries(cursors).map(([userId, cursor]) => {
         const remoteUser = user && userId !== user.id ? 
