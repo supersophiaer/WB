@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useWhiteboard } from '../context/WhiteboardContext'
-import { FaPen, FaSquare, FaCircle, FaFont, FaImage, FaEraser, FaHandPaper, FaMouse, FaUndo, FaRedo, FaTrash, FaSave, FaDownload, FaMagic } from 'react-icons/fa'
+import { FaPen, FaSquare, FaCircle, FaFont, FaImage, FaEraser, FaHandPaper, FaMouse, FaUndo, FaRedo, FaTrash, FaDownload, FaMagic } from 'react-icons/fa'
 import { HexColorPicker } from 'react-colorful'
 import { toPng } from 'html-to-image'
 import { saveAs } from 'file-saver'
@@ -60,7 +60,7 @@ const Toolbar = () => {
     
     try {
       const dataUrl = await toPng(canvasRef.current, { 
-        backgroundColor: '#242424',
+        backgroundColor: '#ffffff',
         pixelRatio: 2
       })
       
@@ -92,18 +92,18 @@ const Toolbar = () => {
   }
 
   return (
-    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-800 rounded-lg shadow-lg p-2 flex items-center space-x-2">
+    <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 rounded-lg shadow-xl p-3 flex flex-col items-center gap-3">
       {/* Drawing Tools */}
-      <div className="flex space-x-1">
+      <div className="flex flex-col gap-2">
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'pen' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'pen' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('pen')}
           title="Pen"
         >
-          <FaPen />
+          <FaPen size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'line' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'line' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('line')}
           title="Line"
         >
@@ -112,80 +112,81 @@ const Toolbar = () => {
           </svg>
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'rectangle' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'rectangle' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('rectangle')}
           title="Rectangle"
         >
-          <FaSquare />
+          <FaSquare size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'circle' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'circle' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('circle')}
           title="Circle"
         >
-          <FaCircle />
+          <FaCircle size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'text' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'text' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('text')}
           title="Text"
         >
-          <FaFont />
+          <FaFont size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'smartShape' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'smartShape' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={handleSmartShape}
           title="Smart Shape Recognition"
         >
-          <FaMagic />
+          <FaMagic size={16} />
         </button>
       </div>
 
-      <div className="h-6 w-px bg-gray-600"></div>
+      <div className="w-full h-px bg-gray-600"></div>
 
       {/* Selection Tools */}
-      <div className="flex space-x-1">
+      <div className="flex flex-col gap-2">
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'select' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'select' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('select')}
           title="Select"
         >
-          <FaMouse />
+          <FaMouse size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'pan' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'pan' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('pan')}
           title="Pan"
         >
-          <FaHandPaper />
+          <FaHandPaper size={16} />
         </button>
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${tool === 'eraser' ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${tool === 'eraser' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={() => handleToolChange('eraser')}
           title="Eraser"
         >
-          <FaEraser />
+          <FaEraser size={16} />
         </button>
       </div>
 
-      <div className="h-6 w-px bg-gray-600"></div>
+      <div className="w-full h-px bg-gray-600"></div>
 
       {/* Style Controls */}
-      <div className="flex space-x-1 items-center">
+      <div className="flex flex-col gap-2 items-center">
         <div className="relative">
           <button 
-            className="w-6 h-6 rounded border border-gray-600"
+            className="w-10 h-10 flex items-center justify-center rounded-md overflow-hidden border-2 border-gray-600"
             style={{ backgroundColor: color }}
             onClick={() => setShowColorPicker(!showColorPicker)}
             title="Color"
+            aria-label="Select color"
           />
           {showColorPicker && (
-            <div className="absolute top-full left-0 mt-2 z-20">
+            <div className="absolute left-12 top-0 z-20">
               <div 
                 className="fixed inset-0 z-10" 
                 onClick={() => setShowColorPicker(false)}
               />
-              <div className="relative z-20">
+              <div className="relative z-20 bg-gray-800 p-2 rounded-lg shadow-xl">
                 <HexColorPicker color={color} onChange={handleColorChange} />
               </div>
             </div>
@@ -194,16 +195,16 @@ const Toolbar = () => {
         
         <div className="relative">
           <button 
-            className="p-2 rounded hover:bg-gray-700"
+            className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
             onClick={() => setShowSizeSlider(!showSizeSlider)}
             title="Brush Size"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r={size} fill="currentColor" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r={size / 2 + 2} fill="currentColor" />
             </svg>
           </button>
           {showSizeSlider && (
-            <div className="absolute top-full left-0 mt-2 bg-gray-800 p-2 rounded shadow-lg z-20">
+            <div className="absolute left-12 top-0 bg-gray-800 p-3 rounded-lg shadow-xl z-20">
               <input 
                 type="range" 
                 min="1" 
@@ -212,13 +213,13 @@ const Toolbar = () => {
                 onChange={handleSizeChange}
                 className="w-32"
               />
-              <div className="text-center mt-1">{size}px</div>
+              <div className="text-center mt-1 text-sm text-gray-300">{size}px</div>
             </div>
           )}
         </div>
         
         <button 
-          className={`p-2 rounded hover:bg-gray-700 ${fill ? 'tool-active' : ''}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${fill ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
           onClick={handleFillToggle}
           title={fill ? "Filled" : "Outline"}
         >
@@ -232,32 +233,32 @@ const Toolbar = () => {
         </button>
       </div>
 
-      <div className="h-6 w-px bg-gray-600"></div>
+      <div className="w-full h-px bg-gray-600"></div>
 
       {/* History Controls */}
-      <div className="flex space-x-1">
+      <div className="flex flex-col gap-2">
         <button 
-          className="p-2 rounded hover:bg-gray-700"
+          className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
           onClick={handleUndo}
           title="Undo"
         >
-          <FaUndo />
+          <FaUndo size={16} />
         </button>
         <button 
-          className="p-2 rounded hover:bg-gray-700"
+          className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
           onClick={handleRedo}
           title="Redo"
         >
-          <FaRedo />
+          <FaRedo size={16} />
         </button>
       </div>
 
-      <div className="h-6 w-px bg-gray-600"></div>
+      <div className="w-full h-px bg-gray-600"></div>
 
       {/* File Operations */}
-      <div className="flex space-x-1">
-        <label className="p-2 rounded hover:bg-gray-700 cursor-pointer" title="Upload Image">
-          <FaImage />
+      <div className="flex flex-col gap-2">
+        <label className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors cursor-pointer" title="Upload Image">
+          <FaImage size={16} />
           <input 
             type="file" 
             accept="image/*" 
@@ -266,22 +267,22 @@ const Toolbar = () => {
           />
         </label>
         <button 
-          className="p-2 rounded hover:bg-gray-700"
+          className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
           onClick={handleSave}
           title="Save as PNG"
         >
-          <FaDownload />
+          <FaDownload size={16} />
         </button>
         <button 
-          className="p-2 rounded hover:bg-gray-700"
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${selectedElement ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 cursor-not-allowed'}`}
           onClick={handleDelete}
           title="Delete Selected"
           disabled={!selectedElement}
         >
-          <FaTrash className={selectedElement ? '' : 'opacity-50'} />
+          <FaTrash size={16} />
         </button>
         <button 
-          className="p-2 rounded hover:bg-gray-700"
+          className="w-10 h-10 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
           onClick={handleClear}
           title="Clear All"
         >
@@ -289,8 +290,6 @@ const Toolbar = () => {
             <path d="M3 6h18"></path>
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
           </svg>
         </button>
       </div>

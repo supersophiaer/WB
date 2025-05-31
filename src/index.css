@@ -36,7 +36,7 @@ body {
 }
 
 .tool-active {
-  @apply bg-primary-100 text-primary-800;
+  @apply bg-primary-600 text-white;
 }
 
 .infinite-canvas {

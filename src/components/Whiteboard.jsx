@@ -330,7 +330,7 @@ const Whiteboard = () => {
   return (
     <div 
       ref={containerRef}
-      className="whiteboard-container relative w-full h-full overflow-hidden bg-gray-900"
+      className="whiteboard-container relative w-full h-full overflow-hidden bg-white"
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
