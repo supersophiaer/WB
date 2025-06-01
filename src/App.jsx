@@ -31,29 +31,28 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 text-gray-900">
+    <div className="flex flex-col h-screen bg-slate-50 text-slate-800">
       {!connected && <div className="loading-indicator"></div>}
       
       {showJoinModal ? (
         <JoinModal onJoin={handleJoin} roomId={roomId} />
       ) : (
         <>
-          <header className="bg-white border-gray-200 border-b p-2 flex justify-between items-center">
+          <header className="bg-white border-b border-slate-200 p-3 flex justify-between items-center shadow-sm">
             <div className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary-500 mr-2">
                 <path d="M2 3h20"></path>
                 <path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"></path>
                 <path d="m7 21 5-5 5 5"></path>
               </svg>
-              <h1 className="text-xl font-bold">Collaborative Whiteboard</h1>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Collaborative Whiteboard</h1>
             </div>
             <div className="flex items-center">
-              <div className="mr-4 text-sm bg-gray-200">
-                Room: <span className="font-mono bg-gray-200 px-2 py-1 rounded">{roomId}</span>
+              <div className="mr-4 text-sm flex items-center">
+                <span className="mr-2">Room:</span> 
+                <span className="font-mono bg-slate-100 px-3 py-1.5 rounded-md text-primary-600 border border-slate-200">{roomId}</span>
               </div>
-              <div className="ml-4">
-                <UserPanel />
-              </div>
+              <UserPanel />
             </div>
           </header>
           

@@ -8,7 +8,7 @@ export function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null)
   const [connected, setConnected] = useState(false)
   const [users, setUsers] = useState([])
-  const userContext = useUser() // Store the entire context instead of destructuring
+  const { user } = useUser()
 
   useEffect(() => {
     const socketInstance = io('/', {
@@ -38,11 +38,11 @@ export function SocketProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    if (socket && userContext?.user) { // Safely access user property
-      socket.auth = { user: userContext.user }
+    if (socket && user) {
+      socket.auth = { user }
       socket.connect()
     }
-  }, [socket, userContext?.user]) // Use optional chaining in dependency array
+  }, [socket, user])
 
   return (
     <SocketContext.Provider value={{ socket, connected, users }}>

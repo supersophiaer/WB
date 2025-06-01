@@ -11,7 +11,7 @@ const initialState = {
   selectedElement: null,
   action: null,
   tool: 'pen',
-  color: '#ffffff',
+  color: '#000000',
   size: 5,
   fill: false,
   text: '',
@@ -270,9 +270,8 @@ export function WhiteboardProvider({ children }) {
   const drawText = (context, element) => {
     if (!element.text) return
     
-    const fontSize = element.size * 2 || state.size * 2
-    context.font = `${fontSize}px sans-serif`
-    context.fillStyle = element.color || state.color
+    context.font = `${element.size * 2}px sans-serif`
+    context.fillStyle = element.color
     context.fillText(element.text, element.x1, element.y1)
   }
 

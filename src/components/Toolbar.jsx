@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useWhiteboard } from '../context/WhiteboardContext'
-import { FaPen, FaSquare, FaCircle, FaFont, FaImage, FaEraser, FaHandPaper, FaMouse, FaUndo, FaRedo, FaTrash, FaDownload, FaMagic } from 'react-icons/fa'
+import { FaPen, FaSquare, FaCircle, FaFont, FaImage, FaEraser, FaHandPaper, FaMouse, FaUndo, FaRedo, FaTrash, FaSave, FaDownload, FaMagic } from 'react-icons/fa'
 import { HexColorPicker } from 'react-colorful'
 import { toPng } from 'html-to-image'
 import { saveAs } from 'file-saver'
@@ -91,103 +91,111 @@ const Toolbar = () => {
     dispatch({ type: 'SET_TOOL', payload: 'smartShape' })
   }
 
+  const toolGroups = [
+    {
+      title: "Drawing Tools",
+      tools: [
+        { id: 'pen', icon: <FaPen />, tooltip: "Pen" },
+        { id: 'line', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>, tooltip: "Line" },
+        { id: 'rectangle', icon: <FaSquare />, tooltip: "Rectangle" },
+        { id: 'circle', icon: <FaCircle />, tooltip: "Circle" },
+        { id: 'text', icon: <FaFont />, tooltip: "Text" },
+        { id: 'smartShape', icon: <FaMagic />, tooltip: "Smart Shape Recognition" }
+      ]
+    },
+    {
+      title: "Selection Tools",
+      tools: [
+        { id: 'select', icon: <FaMouse />, tooltip: "Select" },
+        { id: 'pan', icon: <FaHandPaper />, tooltip: "Pan" },
+        { id: 'eraser', icon: <FaEraser />, tooltip: "Eraser" }
+      ]
+    },
+    {
+      title: "History Controls",
+      tools: [
+        { id: 'undo', icon: <FaUndo />, tooltip: "Undo", action: handleUndo },
+        { id: 'redo', icon: <FaRedo />, tooltip: "Redo", action: handleRedo }
+      ]
+    },
+    {
+      title: "File Operations",
+      tools: [
+        { id: 'image', icon: <FaImage />, tooltip: "Upload Image", isFileUpload: true },
+        { id: 'save', icon: <FaDownload />, tooltip: "Save as PNG", action: handleSave },
+        { id: 'delete', icon: <FaTrash />, tooltip: "Delete Selected", action: handleDelete, disabled: !selectedElement },
+        { id: 'clear', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>, tooltip: "Clear All", action: handleClear }
+      ]
+    }
+  ]
+
   return (
-    <div className="fixed left-2 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 rounded-lg shadow-xl p-2 flex flex-col items-center gap-2">
-      {/* Drawing Tools */}
-      <div className="flex flex-col gap-1">
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'pen' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('pen')}
-          title="Pen"
-        >
-          <FaPen size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'line' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('line')}
-          title="Line"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'rectangle' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('rectangle')}
-          title="Rectangle"
-        >
-          <FaSquare size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'circle' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('circle')}
-          title="Circle"
-        >
-          <FaCircle size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'text' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('text')}
-          title="Text"
-        >
-          <FaFont size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'smartShape' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={handleSmartShape}
-          title="Smart Shape Recognition"
-        >
-          <FaMagic size={14} />
-        </button>
-      </div>
+    <div className="absolute top-0 left-4 bottom-0 z-10 bg-white rounded-lg shadow-lg p-2 flex flex-col items-center space-y-4 my-4 border border-slate-200">
+      {toolGroups.map((group, groupIndex) => (
+        <div key={groupIndex} className="w-full">
+          {groupIndex > 0 && <div className="w-full h-px bg-slate-200 my-2"></div>}
+          <div className="flex flex-col space-y-1">
+            {group.tools.map((toolItem) => {
+              if (toolItem.isFileUpload) {
+                return (
+                  <label 
+                    key={toolItem.id}
+                    className="p-2 rounded-md hover:bg-slate-100 cursor-pointer transition-colors duration-200 flex items-center justify-center text-slate-700 hover:text-primary-600" 
+                    title={toolItem.tooltip}
+                  >
+                    {toolItem.icon}
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )
+              }
+              
+              return (
+                <button 
+                  key={toolItem.id}
+                  className={`p-2 rounded-md hover:bg-slate-100 transition-colors duration-200 flex items-center justify-center ${
+                    tool === toolItem.id 
+                      ? 'bg-primary-50 text-primary-600 shadow-sm' 
+                      : 'text-slate-700 hover:text-primary-600'
+                  } ${toolItem.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={toolItem.action || (() => handleToolChange(toolItem.id))}
+                  title={toolItem.tooltip}
+                  disabled={toolItem.disabled}
+                >
+                  {toolItem.icon}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ))}
 
-      <div className="w-full h-px bg-gray-600"></div>
-
-      {/* Selection Tools */}
-      <div className="flex flex-col gap-1">
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'select' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('select')}
-          title="Select"
-        >
-          <FaMouse size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'pan' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('pan')}
-          title="Pan"
-        >
-          <FaHandPaper size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${tool === 'eraser' ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-          onClick={() => handleToolChange('eraser')}
-          title="Eraser"
-        >
-          <FaEraser size={14} />
-        </button>
-      </div>
-
-      <div className="w-full h-px bg-gray-600"></div>
+      <div className="w-full h-px bg-slate-200"></div>
 
       {/* Style Controls */}
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col space-y-2 items-center">
         <div className="relative">
           <button 
-            className="w-8 h-8 flex items-center justify-center rounded-md overflow-hidden border-2 border-gray-600"
+            className="w-8 h-8 rounded-md border border-slate-300 shadow-sm"
             style={{ backgroundColor: color }}
             onClick={() => setShowColorPicker(!showColorPicker)}
             title="Color"
-            aria-label="Select color"
           />
           {showColorPicker && (
-            <div className="absolute left-10 top-0 z-20">
+            <div className="absolute left-full ml-2 z-20">
               <div 
                 className="fixed inset-0 z-10" 
                 onClick={() => setShowColorPicker(false)}
               />
-              <div className="relative z-20 bg-gray-800 p-2 rounded-lg shadow-xl">
+              <div className="relative z-20 shadow-xl rounded-lg overflow-hidden">
                 <HexColorPicker color={color} onChange={handleColorChange} />
+                <div className="bg-white p-2 text-center text-sm font-mono">
+                  {color}
+                </div>
               </div>
             </div>
           )}
@@ -195,101 +203,40 @@ const Toolbar = () => {
         
         <div className="relative">
           <button 
-            className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-md hover:bg-slate-100 transition-colors duration-200 text-slate-700"
             onClick={() => setShowSizeSlider(!showSizeSlider)}
             title="Brush Size"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r={size / 2 + 2} fill="currentColor" />
+              <circle cx="12" cy="12" r={size} fill="currentColor" />
             </svg>
           </button>
           {showSizeSlider && (
-            <div className="absolute left-10 top-0 bg-gray-800 p-2 rounded-lg shadow-xl z-20">
+            <div className="absolute left-full ml-2 bg-white p-3 rounded-lg shadow-xl z-20 border border-slate-200">
               <input 
                 type="range" 
                 min="1" 
                 max="20" 
                 value={size} 
                 onChange={handleSizeChange}
-                className="w-28"
+                className="w-32 accent-primary-500"
               />
-              <div className="text-center mt-1 text-xs text-gray-300">{size}px</div>
+              <div className="text-center mt-1 text-sm font-medium">{size}px</div>
             </div>
           )}
         </div>
         
         <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${fill ? 'bg-primary-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+          className={`p-2 rounded-md hover:bg-slate-100 transition-colors duration-200 ${fill ? 'bg-primary-50 text-primary-600' : 'text-slate-700'}`}
           onClick={handleFillToggle}
           title={fill ? "Filled" : "Outline"}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="4" y="4" width="16" height="16" rx="2" 
               stroke="currentColor" 
               fill={fill ? "currentColor" : "none"} 
               strokeWidth="2"
             />
-          </svg>
-        </button>
-      </div>
-
-      <div className="w-full h-px bg-gray-600"></div>
-
-      {/* History Controls */}
-      <div className="flex flex-col gap-1">
-        <button 
-          className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
-          onClick={handleUndo}
-          title="Undo"
-        >
-          <FaUndo size={14} />
-        </button>
-        <button 
-          className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
-          onClick={handleRedo}
-          title="Redo"
-        >
-          <FaRedo size={14} />
-        </button>
-      </div>
-
-      <div className="w-full h-px bg-gray-600"></div>
-
-      {/* File Operations */}
-      <div className="flex flex-col gap-1">
-        <label className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors cursor-pointer" title="Upload Image">
-          <FaImage size={14} />
-          <input 
-            type="file" 
-            accept="image/*" 
-            className="hidden" 
-            onChange={handleImageUpload}
-          />
-        </label>
-        <button 
-          className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
-          onClick={handleSave}
-          title="Save as PNG"
-        >
-          <FaDownload size={14} />
-        </button>
-        <button 
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${selectedElement ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 cursor-not-allowed'}`}
-          onClick={handleDelete}
-          title="Delete Selected"
-          disabled={!selectedElement}
-        >
-          <FaTrash size={14} />
-        </button>
-        <button 
-          className="w-8 h-8 flex items-center justify-center rounded-md text-gray-300 hover:bg-gray-700 transition-colors"
-          onClick={handleClear}
-          title="Clear All"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 6h18"></path>
-            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
           </svg>
         </button>
       </div>

@@ -1,68 +1,109 @@
 import { useState } from 'react'
-import { useUser } from '../context/UserContext'
+import { FaUser, FaPalette, FaLink, FaArrowRight } from 'react-icons/fa'
 
 const JoinModal = ({ onJoin, roomId }) => {
-  const { createUser } = useUser()
   const [name, setName] = useState('')
-  const [error, setError] = useState('')
-
+  const [color, setColor] = useState('#84cc16')
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    if (!name.trim()) {
-      setError('Please enter your name')
-      return
-    }
+    if (!name.trim()) return
     
-    const user = createUser(name.trim())
-    onJoin(user)
+    onJoin({
+      id: Math.random().toString(36).substring(2, 10),
+      name: name.trim(),
+      color
+    })
   }
-
+  
+  const handleCopyRoomLink = () => {
+    const url = window.location.href
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        alert('Room link copied to clipboard!')
+      })
+      .catch(err => {
+        console.error('Failed to copy room link:', err)
+      })
+  }
+  
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
-      <div className="bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full">
-        <div className="flex items-center justify-center mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
-            <path d="M2 3h20"></path>
-            <path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"></path>
-            <path d="m7 21 5-5 5 5"></path>
-          </svg>
+    <div className="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-75 z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-400 p-6 text-white">
           <h2 className="text-2xl font-bold">Join Whiteboard</h2>
+          <p className="mt-2 opacity-90">Collaborate in real-time with your team</p>
         </div>
         
-        <div className="mb-6">
-          <div className="bg-gray-700 rounded p-3 mb-4 flex items-center">
-            <span className="text-gray-400 mr-2">Room:</span>
-            <span className="font-mono bg-gray-600 px-2 py-1 rounded">{roomId}</span>
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Room ID</label>
+            <div className="flex items-center">
+              <div className="flex-1 bg-slate-100 px-4 py-2 rounded-lg font-mono text-slate-800 border border-slate-200">
+                {roomId}
+              </div>
+              <button 
+                type="button"
+                className="ml-2 p-2 bg-slate-100 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors"
+                onClick={handleCopyRoomLink}
+                title="Copy Room Link"
+              >
+                <FaLink />
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">Share this ID with others to collaborate</p>
           </div>
           
-          <p className="text-gray-300 mb-4">
-            You're about to join a collaborative whiteboard session. Enter your name to continue.
-          </p>
-        </div>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Enter your name"
-              autoFocus
-            />
-            {error && <p className="mt-1 text-red-500 text-sm">{error}</p>}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">Your Name</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <FaUser />
+              </div>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                required
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label htmlFor="color" className="block text-sm font-medium text-slate-700 mb-1">Your Color</label>
+            <div className="flex items-center">
+              <div className="relative flex items-center">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <FaPalette />
+                </div>
+                <input
+                  type="text"
+                  id="colorHex"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                />
+              </div>
+              <input
+                type="color"
+                id="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="ml-2 h-10 w-10 rounded border border-slate-300 cursor-pointer"
+              />
+            </div>
           </div>
           
           <button
             type="submit"
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out"
+            className="w-full flex items-center justify-center py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
           >
-            Join Whiteboard
+            <span>Join Whiteboard</span>
+            <FaArrowRight className="ml-2" />
           </button>
         </form>
       </div>
