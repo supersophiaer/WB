@@ -3,7 +3,7 @@ import { FaUser, FaPalette, FaLink, FaArrowRight } from 'react-icons/fa'
 
 const JoinModal = ({ onJoin, roomId }) => {
   const [name, setName] = useState('')
-  const [color, setColor] = useState('#84cc16')
+  const [color, setColor] = useState('#eab308')
   
   const handleSubmit = (e) => {
     e.preventDefault()
